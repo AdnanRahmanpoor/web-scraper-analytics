@@ -1,6 +1,11 @@
 import psycopg2
 from psycopg2.extras import DictCursor
+import sys
+
+sys.path.insert(0, '/home/adnanrp/Projects/web-scraper-analytics/')
+
 from config.settings import DATABASE
+
 
 class DatabaseConnection:
     # Initialize database connection with the connection parameters
@@ -19,9 +24,13 @@ class DatabaseConnection:
         return self.conn.cursor(cursor_factory=DictCursor)
 
     # Disconnect from the database
-    def __exit__(self, exc_val, exc_tb):
-        self.conn.commit()
-        self.conn.close()
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is None:
+            self.conn.commit()
+        else:
+            self.conn.rollback()
+        if self.conn:
+            self.conn.close()
 
 # Initialize database tables
 def init_db():
