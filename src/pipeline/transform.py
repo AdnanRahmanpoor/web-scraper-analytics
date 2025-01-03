@@ -18,3 +18,25 @@ class DataTransform:
             self.df = pd.read_json(file_path)
         else:
             raise ValueError("Unsupported file format")
+
+    def clean_data(self):
+        """Clean and preprocess the data"""
+        if self.df is None:
+            raise ValueError("No data loaded")
+
+        # Remove duplicates
+        self.df.drop_duplicates(inplace=True)
+
+        # Handle missing values
+        self.df.fillna({
+            'description': 'No description available',
+            'category': 'Uncategorized'
+        }, inplace=True)
+
+        # Clean price data
+        self.df['price'] = pd.to_numeric(self.df['price'].astype(str).str.replace('$', ''),
+            error='coerce')
+
+        # Convert timestamps
+        if 'created_at' in self.df.columns:
+            self.df['created_at'] = pd.to_datetime(self.df['created_at'])
