@@ -40,3 +40,16 @@ class DataTransform:
         # Convert timestamps
         if 'created_at' in self.df.columns:
             self.df['created_at'] = pd.to_datetime(self.df['created_at'])
+
+    def tranform_for_analysis(self):
+        """Apply transformation for analysis"""
+        if self.df is None:
+            raise ValueError("No data loaded")
+
+        # Add derived features
+        self.df['price_category'] = pd.qcut(self.df['price'],
+            q=4,
+            labels=['Budget', 'Medium', 'High', 'Premium']) # placeholder for now
+
+        # Calculate basic statistics
+        self.df['price_normalized'] = (self.df['price'] - self.df['price'].mean()) / self.df['price'].std()
