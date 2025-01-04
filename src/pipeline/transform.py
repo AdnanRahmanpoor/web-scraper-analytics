@@ -53,3 +53,16 @@ class DataTransform:
 
         # Calculate basic statistics
         self.df['price_normalized'] = (self.df['price'] - self.df['price'].mean()) / self.df['price'].std()
+
+    def save_processed_data(self, output_path):
+        """Save processed data to file"""
+        if self.df is None:
+            raise ValueError("No data to save")
+
+        if output_path.endswith('.csv'):
+            self.df.to_csv(output_path, index=False)
+        elif output_path.endswith('.json'):
+            self.df.to_json(output_path, orient='records')
+        else: 
+            raise ValueError("Unsupported output format")
+        
